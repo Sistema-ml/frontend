@@ -1,0 +1,109 @@
+:root {
+  --primary: #1a237e;
+  --primary-light: #283593;
+  --primary-dark: #0d1b5e;
+  --accent: #1565c0;
+  --bg: #f4f6fb;
+  --card-radius: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background-color: var(--bg);
+  color: #212529;
+  margin: 0;
+}
+
+/* Sidebar links hover */
+.hover-white:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: white !important;
+}
+
+/* Transición suave en todos los botones y links */
+a,
+button {
+  transition: all 0.15s ease;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c9d2;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aab4;
+}
+
+/* Tabla más limpia */
+.table > :not(caption) > * > * {
+  padding: 0.65rem 0.75rem;
+}
+
+/* Card hover efecto */
+.card-hover {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* Focus visible */
+.btn:focus-visible,
+.form-control:focus,
+.form-select:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Animación fade-in para páginas */
+main > * {
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal backdrop click area */
+.modal.show {
+  overflow-y: auto;
+}
+
+/* Badge pill ajuste */
+.badge {
+  letter-spacing: 0.02em;
+}
+
+/* Dashed border utility */
+.border-dashed {
+  border-style: dashed !important;
+}
+
+/* Input group sin doble borde */
+.input-group .form-control:not(:first-child) {
+  border-left: 0;
+}
+.input-group .form-control:not(:last-child) {
+  border-right: 0;
+}
