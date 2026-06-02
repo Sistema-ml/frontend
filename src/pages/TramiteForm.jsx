@@ -4,28 +4,34 @@ import { tramitesService, ciudadanosService, mlService } from "../api/services";
 import { Spinner } from "../components/ui";
 
 const TIPOS_TRAMITE = [
-  "Licencia de Funcionamiento",
   "Licencia de Construcción",
+  "Licencia de Funcionamiento",
+  "Permiso de Demolición",
+  "Declaratoria de Fábrica",
+  "Certificado de Numeración",
+  "Certificado de Residencia",
+  "Constancia de Posesión",
+  "Autorización de Espectáculo",
   "Partida de Nacimiento",
   "Partida de Matrimonio",
-  "Certificado de Residencia",
-  "Autorización de Eventos",
-  "Permiso de Demolición",
   "Inscripción de Defunción",
   "Certificado Catastral",
   "Reclamo Vecinal",
+  "Subsidio Social",
   "Otro",
 ];
 
 const AREAS = [
-  "Gerencia Municipal",
+  "Obras y Urbanismo",
   "Rentas y Tributación",
   "Registro Civil",
-  "Obras y Urbanismo",
-  "Seguridad Ciudadana",
-  "Desarrollo Social",
+  "Licencias",
+  "Gerencia Municipal",
   "Medio Ambiente",
-  "Logística",
+  "Desarrollo Social",
+  "Administración",
+  "Legal",
+  "Seguridad Ciudadana",
 ];
 
 const URGENCIAS = [1, 2, 3, 4, 5];
@@ -57,7 +63,7 @@ export default function TramiteForm() {
   useEffect(() => {
     ciudadanosService.listar({ limit: 200 })
       .then(setCiudadanos)
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -187,151 +193,173 @@ export default function TramiteForm() {
                 <h6 className="fw-bold mb-3" style={{ color: "#1a237e" }}>
                   <i className="bi bi-person-fill me-2"></i>Datos del Ciudadano
                 </h6>
-
-                <div className="mb-3">
                   <label className="form-label fw-semibold small">Ciudadano *</label>
-                  <input
-                    type="text"
-                    className="form-control mb-1"
-                    placeholder="Buscar por nombre o DNI..."
-                    value={busquedaCiudadano}
-                    onChange={(e) => setBusquedaCiudadano(e.target.value)}
-                  />
-                  <select
-                    name="ciudadano_id"
-                    className={`form-select ${errors.ciudadano_id ? "is-invalid" : ""}`}
-                    value={form.ciudadano_id}
-                    onChange={handleChange}
-                    size={4}
-                  >
-                    <option value="">— Selecciona —</option>
-                    {ciudadanos
-                      .filter((c) =>
-                        `${c.nombre} ${c.apellido}`.toLowerCase().includes(busquedaCiudadano.toLowerCase()) ||
-                        c.dni?.includes(busquedaCiudadano)
-                      )
-                      .map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.apellido}, {c.nombre} — DNI: {c.dni}
-                        </option>
-                      ))}
-                  </select> 
-                  {errors.ciudadano_id && <div className="invalid-feedback">{errors.ciudadano_id}</div>}
-                </div>
+                  <div className="position-relative">
+                    <input
+                      type="text"
+                      className={`form-control ${errors.ciudadano_id ? "is-invalid" : ""}`}
+                      placeholder="Buscar por nombre o DNI..."
+                      value={busquedaCiudadano}
+                      onChange={(e) => {
+                        setBusquedaCiudadano(e.target.value);
+                        setForm((prev) => ({ ...prev, ciudadano_id: "" }));
+                      }}
+                      onFocus={() => setBusquedaCiudadano("")}
+                      autoComplete="off"
+                    />
+                    {busquedaCiudadano.length > 0 && !form.ciudadano_id && (
+                      <div
+                        className="position-absolute w-100 bg-white border rounded shadow-sm"
+                        style={{ zIndex: 1000, maxHeight: 200, overflowY: "auto", top: "100%" }}
+                      >
+                        {ciudadanos
+                          .filter((c) =>
+                            `${c.nombre} ${c.apellido}`.toLowerCase().includes(busquedaCiudadano.toLowerCase()) ||
+                            c.dni?.includes(busquedaCiudadano)
+                          )
+                          .slice(0, 8)
+                          .map((c) => (
+                            <div
+                              key={c.id}
+                              className="px-3 py-2 small"
+                              style={{ cursor: "pointer" }}
+                              onMouseEnter={(e) => e.currentTarget.style.background = "#f0f4ff"}
+                              onMouseLeave={(e) => e.currentTarget.style.background = "white"}
+                              onMouseDown={() => {
+                                setForm((prev) => ({ ...prev, ciudadano_id: c.id }));
+                                setBusquedaCiudadano(`${c.apellido}, ${c.nombre} — DNI: ${c.dni}`);
+                                setErrors((prev) => ({ ...prev, ciudadano_id: "" }));
+                              }}
+                            >
+                              <span className="fw-semibold">{c.apellido}, {c.nombre}</span>
+                              <span className="text-muted ms-2">DNI: {c.dni}</span>
+                            </div>
+                          ))}
+                        {ciudadanos.filter((c) =>
+                          `${c.nombre} ${c.apellido}`.toLowerCase().includes(busquedaCiudadano.toLowerCase()) ||
+                          c.dni?.includes(busquedaCiudadano)
+                        ).length === 0 && (
+                            <div className="px-3 py-2 small text-muted">No se encontraron ciudadanos</div>
+                          )}
+                      </div>
+                    )}
+                    {errors.ciudadano_id && <div className="invalid-feedback d-block">{errors.ciudadano_id}</div>}
 
-                <hr className="my-4" />
-                <h6 className="fw-bold mb-3" style={{ color: "#1a237e" }}>
-                  <i className="bi bi-file-earmark-text me-2"></i>Datos del Trámite
-                </h6>
-
-                <div className="row g-3">
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold small">Tipo de Trámite *</label>
-                    <select
-                      name="tipo_tramite"
-                      className={`form-select ${errors.tipo_tramite ? "is-invalid" : ""}`}
-                      value={form.tipo_tramite}
-                      onChange={handleChange}
-                    >
-                      <option value="">— Selecciona —</option>
-                      {TIPOS_TRAMITE.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                    {errors.tipo_tramite && <div className="invalid-feedback">{errors.tipo_tramite}</div>}
                   </div>
 
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold small">Área Responsable *</label>
-                    <select
-                      name="area_responsable"
-                      className={`form-select ${errors.area_responsable ? "is-invalid" : ""}`}
-                      value={form.area_responsable}
-                      onChange={handleChange}
-                    >
-                      <option value="">— Selecciona —</option>
-                      {AREAS.map((a) => (
-                        <option key={a} value={a}>{a}</option>
-                      ))}
-                    </select>
-                    {errors.area_responsable && <div className="invalid-feedback">{errors.area_responsable}</div>}
-                  </div>
+                  <hr className="my-4" />
+                  <h6 className="fw-bold mb-3" style={{ color: "#1a237e" }}>
+                    <i className="bi bi-file-earmark-text me-2"></i>Datos del Trámite
+                  </h6>
 
-                  {esEdicion && (
+                  <div className="row g-3">
                     <div className="col-md-6">
-                      <label className="form-label fw-semibold small">Estado</label>
-                      <select name="estado" className="form-select" value={form.estado} onChange={handleChange}>
-                        {["Pendiente", "En revisión", "Observado", "Aprobado", "Rechazado"].map((e) => (
-                          <option key={e} value={e}>{e}</option>
+                      <label className="form-label fw-semibold small">Tipo de Trámite *</label>
+                      <select
+                        name="tipo_tramite"
+                        className={`form-select ${errors.tipo_tramite ? "is-invalid" : ""}`}
+                        value={form.tipo_tramite}
+                        onChange={handleChange}
+                      >
+                        <option value="">— Selecciona —</option>
+                        {TIPOS_TRAMITE.map((t) => (
+                          <option key={t} value={t}>{t}</option>
                         ))}
                       </select>
+                      {errors.tipo_tramite && <div className="invalid-feedback">{errors.tipo_tramite}</div>}
                     </div>
-                  )}
 
-                  <div className="col-12">
-                    <label className="form-label fw-semibold small">Descripción</label>
-                    <textarea
-                      name="descripcion"
-                      className="form-control"
-                      rows={3}
-                      placeholder="Detalla el motivo o requerimiento del trámite..."
-                      value={form.descripcion}
-                      onChange={handleChange}
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold small">Área Responsable *</label>
+                      <select
+                        name="area_responsable"
+                        className={`form-select ${errors.area_responsable ? "is-invalid" : ""}`}
+                        value={form.area_responsable}
+                        onChange={handleChange}
+                      >
+                        <option value="">— Selecciona —</option>
+                        {AREAS.map((a) => (
+                          <option key={a} value={a}>{a}</option>
+                        ))}
+                      </select>
+                      {errors.area_responsable && <div className="invalid-feedback">{errors.area_responsable}</div>}
+                    </div>
+
+                    {esEdicion && (
+                      <div className="col-md-6">
+                        <label className="form-label fw-semibold small">Estado</label>
+                        <select name="estado" className="form-select" value={form.estado} onChange={handleChange}>
+                          {["Pendiente", "En revisión", "Observado", "Aprobado", "Rechazado"].map((e) => (
+                            <option key={e} value={e}>{e}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    <div className="col-12">
+                      <label className="form-label fw-semibold small">Descripción</label>
+                      <textarea
+                        name="descripcion"
+                        className="form-control"
+                        rows={3}
+                        placeholder="Detalla el motivo o requerimiento del trámite..."
+                        value={form.descripcion}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <hr className="my-4" />
+                  <h6 className="fw-bold mb-3" style={{ color: "#1a237e" }}>
+                    <i className="bi bi-paperclip me-2"></i>Documentos Adjuntos (PDF)
+                  </h6>
+
+                  <div
+                    className="border border-dashed rounded p-4 text-center"
+                    style={{ borderStyle: "dashed", cursor: "pointer", background: "#f8f9fa", borderRadius: 8 }}
+                    onClick={() => document.getElementById("files-input").click()}
+                  >
+                    <i className="bi bi-cloud-upload fs-2 text-muted d-block mb-2"></i>
+                    <p className="text-muted small mb-1">Arrastra archivos PDF o haz clic para seleccionar</p>
+                    <p className="text-muted" style={{ fontSize: 11 }}>Máximo 5 archivos, 10MB cada uno</p>
+                    <input
+                      id="files-input"
+                      type="file"
+                      accept=".pdf"
+                      multiple
+                      className="d-none"
+                      onChange={(e) => setArchivos(Array.from(e.target.files))}
                     />
                   </div>
-                </div>
 
-                <hr className="my-4" />
-                <h6 className="fw-bold mb-3" style={{ color: "#1a237e" }}>
-                  <i className="bi bi-paperclip me-2"></i>Documentos Adjuntos (PDF)
-                </h6>
+                  {archivos.length > 0 && (
+                    <ul className="list-group mt-2">
+                      {archivos.map((f, i) => (
+                        <li key={i} className="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2">
+                          <i className="bi bi-file-earmark-pdf text-danger"></i>
+                          <span className="small flex-grow-1">{f.name}</span>
+                          <span className="text-muted" style={{ fontSize: 11 }}>{(f.size / 1024).toFixed(0)} KB</span>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-outline-danger py-0"
+                            onClick={() => setArchivos(archivos.filter((_, j) => j !== i))}
+                          >
+                            <i className="bi bi-x"></i>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
 
-                <div
-                  className="border border-dashed rounded p-4 text-center"
-                  style={{ borderStyle: "dashed", cursor: "pointer", background: "#f8f9fa", borderRadius: 8 }}
-                  onClick={() => document.getElementById("files-input").click()}
-                >
-                  <i className="bi bi-cloud-upload fs-2 text-muted d-block mb-2"></i>
-                  <p className="text-muted small mb-1">Arrastra archivos PDF o haz clic para seleccionar</p>
-                  <p className="text-muted" style={{ fontSize: 11 }}>Máximo 5 archivos, 10MB cada uno</p>
-                  <input
-                    id="files-input"
-                    type="file"
-                    accept=".pdf"
-                    multiple
-                    className="d-none"
-                    onChange={(e) => setArchivos(Array.from(e.target.files))}
-                  />
-                </div>
-
-                {archivos.length > 0 && (
-                  <ul className="list-group mt-2">
-                    {archivos.map((f, i) => (
-                      <li key={i} className="list-group-item list-group-item-action d-flex align-items-center gap-2 py-2">
-                        <i className="bi bi-file-earmark-pdf text-danger"></i>
-                        <span className="small flex-grow-1">{f.name}</span>
-                        <span className="text-muted" style={{ fontSize: 11 }}>{(f.size / 1024).toFixed(0)} KB</span>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-outline-danger py-0"
-                          onClick={() => setArchivos(archivos.filter((_, j) => j !== i))}
-                        >
-                          <i className="bi bi-x"></i>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                <div className="d-flex gap-2 mt-4">
-                  <button type="submit" className="btn btn-primary px-4" disabled={loading}>
-                    {loading ? <span className="spinner-border spinner-border-sm me-2" /> : <i className="bi bi-save me-2"></i>}
-                    {loading ? "Guardando..." : (esEdicion ? "Actualizar Trámite" : "Registrar Trámite")}
-                  </button>
-                  <button type="button" className="btn btn-outline-secondary" onClick={() => navigate(-1)}>
-                    Cancelar
-                  </button>
-                </div>
+                  <div className="d-flex gap-2 mt-4">
+                    <button type="submit" className="btn btn-primary px-4" disabled={loading}>
+                      {loading ? <span className="spinner-border spinner-border-sm me-2" /> : <i className="bi bi-save me-2"></i>}
+                      {loading ? "Guardando..." : (esEdicion ? "Actualizar Trámite" : "Registrar Trámite")}
+                    </button>
+                    <button type="button" className="btn btn-outline-secondary" onClick={() => navigate(-1)}>
+                      Cancelar
+                    </button>
+                  </div>
               </form>
             </div>
           </div>
