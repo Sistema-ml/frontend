@@ -150,14 +150,22 @@ export default function TramiteDetalle() {
                             >
                               <i className="bi bi-eye"></i>
                             </a>
-                            <a
-                              href={doc.url}
-                              download
+                              <button
                               className="btn btn-sm btn-outline-secondary"
                               title="Descargar"
+                              onClick={async () => {
+                                const res = await fetch(doc.url);
+                                const blob = await res.blob();
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = doc.nombre_archivo;
+                                a.click();
+                                URL.revokeObjectURL(url);
+                              }}
                             >
                               <i className="bi bi-download"></i>
-                            </a>
+                            </button>
                           </>
                         )}
                       </div>

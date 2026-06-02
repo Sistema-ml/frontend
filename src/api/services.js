@@ -31,9 +31,9 @@ export const usuariosService = {
 
 // ─── Ciudadanos ─────────────────────────────────────────────────────────────────
 export const ciudadanosService = {
-  listar: (params) => api.get("/ciudadanos", params),
+  listar: (params) => api.get("/ciudadanos/", params),
   obtener: (id) => api.get(`/ciudadanos/${id}`),
-  crear: (data) => api.post("/ciudadanos", data),
+  crear: (data) => api.post("/ciudadanos/", data),
   actualizar: (id, data) => api.patch(`/ciudadanos/${id}`, data),
   eliminar: (id) => api.delete(`/ciudadanos/${id}`),
   tramites: (id) => api.get(`/ciudadanos/${id}/historial`),
@@ -41,9 +41,9 @@ export const ciudadanosService = {
 
 // ─── Trámites ───────────────────────────────────────────────────────────────────
 export const tramitesService = {
-  listar: (params) => api.get("/tramites", params),
+  listar: (params) => api.get("/tramites/", params),
   obtener: (id) => api.get(`/tramites/${id}`),
-  crear: (data) => api.post("/tramites", data),
+  crear: (data) => api.post("/tramites/", data),
   actualizar: (id, data) => api.patch(`/tramites/${id}`, data),
   eliminar: (id) => api.delete(`/tramites/${id}`),
   cambiarEstado: (id, data) => api.patch(`/tramites/${id}/estado`, data),
@@ -51,7 +51,7 @@ export const tramitesService = {
   // Documentos del trámite
   listarDocumentos: (tramiteId) => api.get(`/documentos/${tramiteId}`),
   subirDocumento: (tramiteId, formData) =>
-    api.post(`/tramites/${tramiteId}/documentos`, formData),
+    api.post(`/documentos/${tramiteId}`, formData),
   eliminarDocumento: (tramiteId, docId) =>
     api.delete(`/tramites/${tramiteId}/documentos/${docId}`),
 
@@ -68,8 +68,8 @@ export const documentosService = {
 // ─── Dashboard ──────────────────────────────────────────────────────────────────
 export const dashboardService = {
   getStats: () => api.get("/tramites/dashboard"),
-  getTramitesPorArea: () => api.get("/dashboard/tramites-por-area"),
-  getTramitesPorEstado: () => api.get("/dashboard/tramites-por-estado"),
+  getTramitesPorArea: () => api.get("/tramites/dashboard"),
+  getTramitesPorEstado: () => api.get("/tramites/dashboard"),
 };
 
 // ─── Notificaciones ─────────────────────────────────────────────────────────────

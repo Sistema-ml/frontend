@@ -21,7 +21,7 @@ export default function Login() {
     setError("");
     try {
       const data = await authService.login(form.email, form.password);
-      login(data.access_token, data.user);
+      login(data.access_token, data.usuario);
       navigate("/dashboard");
     } catch (err) {
       setError(err.message || "Credenciales incorrectas");

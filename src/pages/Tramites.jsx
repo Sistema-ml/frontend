@@ -19,6 +19,7 @@ export default function Tramites() {
   const [modalEliminar, setModalEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
   const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState(searchParams.get("search") || "");
   const PER_PAGE = 15;
 
   const cargarTramites = useCallback(async () => {
@@ -68,6 +69,7 @@ export default function Tramites() {
 
   const limpiarFiltros = () => {
     setSearch("");
+    setSearchInput("");
     setEstado("");
     setPrioridad("");
     setPage(1);
@@ -102,9 +104,16 @@ export default function Tramites() {
                   type="text"
                   className="form-control"
                   placeholder="N° trámite, tipo, ciudadano..."
-                  value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { setSearch(searchInput); setPage(1); } }}
                 />
+                <button
+                  className="btn btn-outline-primary"
+                  onClick={() => { setSearch(searchInput); setPage(1); }}
+                >
+                  <i className="bi bi-search"></i>
+                </button>
               </div>
             </div>
             <div className="col-6 col-md-3">

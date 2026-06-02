@@ -50,6 +50,7 @@ export default function TramiteForm() {
   const [loadingPrediccion, setLoadingPrediccion] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingDatos, setLoadingDatos] = useState(esEdicion);
+  const [busquedaCiudadano, setBusquedaCiudadano] = useState("");
   const [error, setError] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -189,19 +190,32 @@ export default function TramiteForm() {
 
                 <div className="mb-3">
                   <label className="form-label fw-semibold small">Ciudadano *</label>
+                  <input
+                    type="text"
+                    className="form-control mb-1"
+                    placeholder="Buscar por nombre o DNI..."
+                    value={busquedaCiudadano}
+                    onChange={(e) => setBusquedaCiudadano(e.target.value)}
+                  />
                   <select
                     name="ciudadano_id"
                     className={`form-select ${errors.ciudadano_id ? "is-invalid" : ""}`}
                     value={form.ciudadano_id}
                     onChange={handleChange}
+                    size={4}
                   >
-                    <option value="">— Selecciona un ciudadano —</option>
-                    {ciudadanos.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.apellido}, {c.nombre} — DNI: {c.dni}
-                      </option>
-                    ))}
-                  </select>
+                    <option value="">— Selecciona —</option>
+                    {ciudadanos
+                      .filter((c) =>
+                        `${c.nombre} ${c.apellido}`.toLowerCase().includes(busquedaCiudadano.toLowerCase()) ||
+                        c.dni?.includes(busquedaCiudadano)
+                      )
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.apellido}, {c.nombre} — DNI: {c.dni}
+                        </option>
+                      ))}
+                  </select> 
                   {errors.ciudadano_id && <div className="invalid-feedback">{errors.ciudadano_id}</div>}
                 </div>
 
