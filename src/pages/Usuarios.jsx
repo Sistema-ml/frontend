@@ -3,13 +3,13 @@ import { usuariosService } from "../api/services";
 import { Spinner, ModalConfirm } from "../components/ui";
 
 const ROLES = ["administrador", "empleado", "supervisor"];
-const INITIAL_FORM = { username: "", email: "", password: "", rol: "empleado", nombre_completo: "" };
+const INITIAL_FORM = { nombre: "", apellido: "", email: "", password: "", rol: "empleado" };
 
 function ModalUsuario({ usuario, onClose, onSaved }) {
   const esEdicion = Boolean(usuario?.id);
   const [form, setForm] = useState(
     esEdicion
-      ? { username: usuario.username, email: usuario.email, rol: usuario.rol, nombre_completo: usuario.nombre_completo || "", password: "" }
+      ? { nombre: usuario.nombre, apellido: usuario.apellido, email: usuario.email, rol: usuario.rol, password: "" }
       : INITIAL_FORM
   );
   const [loading, setLoading] = useState(false);
@@ -51,13 +51,15 @@ function ModalUsuario({ usuario, onClose, onSaved }) {
           <div className="modal-body">
             {error && <div className="alert alert-danger py-2 small">{error}</div>}
             <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label small fw-semibold">Nombre Completo</label>
-                <input name="nombre_completo" className="form-control" value={form.nombre_completo} onChange={handleChange} placeholder="Juan Pérez" />
-              </div>
-              <div className="mb-3">
-                <label className="form-label small fw-semibold">Usuario *</label>
-                <input name="username" className="form-control" value={form.username} onChange={handleChange} required placeholder="juanperez" />
+              <div className="row g-3 mb-3">
+                <div className="col-6">
+                  <label className="form-label small fw-semibold">Nombre *</label>
+                  <input name="nombre" className="form-control" value={form.nombre} onChange={handleChange} required placeholder="Juan" />
+                </div>
+                <div className="col-6">
+                  <label className="form-label small fw-semibold">Apellido *</label>
+                  <input name="apellido" className="form-control" value={form.apellido} onChange={handleChange} required placeholder="Pérez" />
+                </div>
               </div>
               <div className="mb-3">
                 <label className="form-label small fw-semibold">Email *</label>

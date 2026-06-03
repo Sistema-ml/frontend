@@ -22,11 +22,11 @@ export const authService = {
 
 // ─── Usuarios ───────────────────────────────────────────────────────────────────
 export const usuariosService = {
-  listar: (params) => api.get("/usuarios", params),
-  obtener: (id) => api.get(`/usuarios/${id}`),
-  crear: (data) => api.post("/usuarios", data),
-  actualizar: (id, data) => api.put(`/usuarios/${id}`, data),
-  eliminar: (id) => api.delete(`/usuarios/${id}`),
+  listar: (params) => api.get("/auth/usuarios", params),
+  obtener: (id) => api.get(`/auth/usuarios/${id}`),
+  crear: (data) => api.post("/auth/usuarios", data),
+  actualizar: (id, data) => api.patch(`/auth/usuarios/${id}`, data),
+  eliminar: (id) => api.delete(`/auth/usuarios/${id}`),
 };
 
 // ─── Ciudadanos ─────────────────────────────────────────────────────────────────
